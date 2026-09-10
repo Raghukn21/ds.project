@@ -1,6 +1,6 @@
-version: "3.8"
 services:
   api:
+    container_name: ds_project_api
     build: .
     ports:
       - "8000:8000"
