@@ -10,8 +10,11 @@ RUN apt-get update && apt-get install -y \
 
 COPY requirements.txt .
 
-# Install CPU version of PyTorch first to avoid massive CUDA wheel downloads (>3GB) and timeouts
-RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
+# Upgrade pip to avoid metadata parsing bugs in older pip versions
+RUN pip install --no-cache-dir --upgrade pip
+
+# Install CPU version of PyTorch using extra-index-url so PyPI dependencies can resolve
+RUN pip install --no-cache-dir torch torchvision --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Install remaining dependencies
 RUN pip install --default-timeout=1000 --no-cache-dir -r requirements.txt
