@@ -1,0 +1,157 @@
+# AgriGuard AI - Default Configuration
+
+# Model Configuration
+model:
+  type: "multi_label"  # Options: multi_label, single_stage, severity
+  backbone: "efficientnet_b0"  # Options: efficientnet_b0, efficientnet_b3, resnet50, vit_base_patch16_224
+  pretrained: true
+  
+  # Multi-label model parameters
+  num_diseases: 7
+  num_pests: 5
+  num_abiotic: 5
+  
+  # Severity model parameters
+  num_severity_levels: 4
+  
+  # Dropout
+  dropout: 0.3
+
+# Data Configuration
+data:
+  data_dir: "data/raw"
+  metadata_file: "data/raw/metadata.csv"
+  image_size: 224
+  batch_size: 32
+  num_workers: 4
+  
+  # Data splits
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+
+# Training Configuration
+training:
+  num_epochs: 50
+  learning_rate: 0.0001
+  weight_decay: 0.00001
+  
+  # Loss weights
+  multi_label_loss_weight: 1.0
+  health_loss_weight: 0.5
+  severity_loss_weight: 0.3
+  
+  # Optimizer
+  optimizer: "adamw"
+  
+  # Learning rate scheduler
+  scheduler: "cosine_annealing"
+  T_max: 50
+  eta_min: 0.000001
+  
+  # Gradient clipping
+  max_grad_norm: 1.0
+  
+  # Early stopping
+  patience: 10
+  min_delta: 0.001
+
+# Detection Configuration (optional)
+detection:
+  use_detection: false
+  model_path: null
+  confidence_threshold: 0.5
+  iou_threshold: 0.45
+
+# Evaluation Configuration
+evaluation:
+  threshold: 0.5
+  metrics:
+    - precision
+    - recall
+    - f1
+    - hamming_loss
+    - accuracy
+
+# Logging Configuration
+logging:
+  log_dir: "experiments/logs"
+  tensorboard: true
+  save_frequency: 5
+  
+  # Checkpointing
+  save_dir: "experiments/checkpoints"
+  save_best_only: true
+  monitor: "val_loss"
+  mode: "min"
+
+# Inference Configuration
+inference:
+  device: "cuda"  # Options: cuda, cpu
+  batch_size: 1
+  threshold: 0.5
+  return_visualization: false
+
+# API Configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  reload: false
+  workers: 1
+
+# Advisory Configuration
+advisory:
+  priority_thresholds:
+    urgent: 2.5
+    high: 1.5
+    moderate: 0.5
+    low: 0.0
+  
+  expert_consultation:
+    severity_threshold: 2.5
+    num_issues_threshold: 3
+    serious_diseases:
+      - late_blight
+      - viral_infection
+      - bacterial_spot
+
+# Labels Configuration
+labels:
+  diseases:
+    - early_blight
+    - late_blight
+    - powdery_mildew
+    - leaf_spot
+    - bacterial_spot
+    - viral_infection
+    - fungal_infection
+  
+  pests:
+    - aphids
+    - whiteflies
+    - thrips
+    - spider_mites
+    - caterpillars
+  
+  abiotic:
+    - nutrient_deficiency
+    - water_stress
+    - heat_stress
+    - salt_stress
+    - light_stress
+  
+  health_status:
+    - healthy
+    - stressed
+    - diseased
+
+# Crop Types
+crop_types:
+  - tomato
+  - chili
+  - cotton
+  - potato
+  - rice
+  - wheat
+  - maize
+  - unknown

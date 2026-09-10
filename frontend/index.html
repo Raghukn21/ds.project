@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriGuard AI - Full-Plant Health Assessment</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-leaf"></i>
+                    <h1>AgriGuard AI</h1>
+                </div>
+                <p class="subtitle">Full-Plant Health Assessment System</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="upload-container">
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Upload Plant Image</h3>
+                        <p>Drag and drop an image here or click to select</p>
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                        <button class="btn btn-primary" id="selectFileBtn">
+                            <i class="fas fa-folder-open"></i> Select Image
+                        </button>
+                    </div>
+                    
+                    <!-- Preview -->
+                    <div class="preview-container" id="previewContainer" style="display: none;">
+                        <img id="previewImage" alt="Plant preview">
+                        <button class="btn btn-secondary" id="removeImageBtn">
+                            <i class="fas fa-times"></i> Remove
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Options -->
+                <div class="options-container">
+                    <div class="form-group">
+                        <label for="cropType">Plant/Tree Type</label>
+                        <input type="text" id="cropType" list="cropSuggestions" placeholder="Enter plant or tree type (e.g., Tomato, Oak, Rose, etc.)">
+                        <datalist id="cropSuggestions">
+                            <option value="Tomato">
+                            <option value="Chili">
+                            <option value="Cotton">
+                            <option value="Potato">
+                            <option value="Rice">
+                            <option value="Wheat">
+                            <option value="Maize">
+                            <option value="Oak">
+                            <option value="Pine">
+                            <option value="Maple">
+                            <option value="Rose">
+                            <option value="Sunflower">
+                            <option value="Apple">
+                            <option value="Orange">
+                            <option value="Mango">
+                            <option value="Banana">
+                            <option value="Coconut">
+                            <option value="Bamboo">
+                            <option value="Teak">
+                            <option value="Neem">
+                            <option value="Pepper">
+                            <option value="Cucumber">
+                            <option value="Carrot">
+                            <option value="Lettuce">
+                            <option value="Spinach">
+                            <option value="Broccoli">
+                            <option value="Cauliflower">
+                            <option value="Brinjal">
+                            <option value="Okra">
+                            <option value="Pumpkin">
+                            <option value="Watermelon">
+                            <option value="Grapes">
+                            <option value="Strawberry">
+                            <option value="Blueberry">
+                            <option value="Papaya">
+                            <option value="Guava">
+                            <option value="Pomegranate">
+                            <option value="Lemon">
+                            <option value="Coffee">
+                            <option value="Tea">
+                            <option value="Sugarcane">
+                            <option value="Soybean">
+                            <option value="Peanut">
+                            <option value="Mustard">
+                            <option value="Sesame">
+                            <option value="Turmeric">
+                            <option value="Ginger">
+                            <option value="Garlic">
+                            <option value="Onion">
+                            <option value="Tulsi">
+                            <option value="Aloe Vera">
+                            <option value="Mint">
+                            <option value="Basil">
+                            <option value="Coriander">
+                            <option value="Fenugreek">
+                        </datalist>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="threshold">Confidence Threshold</label>
+                        <input type="range" id="threshold" min="0" max="1" step="0.05" value="0.5">
+                        <span id="thresholdValue">0.5</span>
+                    </div>
+                </div>
+
+                <!-- Analyze Button -->
+                <button class="btn btn-analyze" id="analyzeBtn" disabled>
+                    <i class="fas fa-search"></i> Analyze Plant Health
+                </button>
+            </section>
+
+            <!-- Loading State -->
+            <div class="loading-container" id="loadingContainer" style="display: none;">
+                <div class="spinner"></div>
+                <p>Analyzing plant image...</p>
+            </div>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <h2 class="section-title">Analysis Results</h2>
+                
+                <!-- Health Status Card -->
+                <div class="card health-card" id="healthCard">
+                    <div class="card-header">
+                        <i class="fas fa-heartbeat"></i>
+                        <h3>Health Status</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="health-status" id="healthStatus">Healthy</div>
+                        <div class="severity-info">
+                            <span class="severity-label">Severity:</span>
+                            <span class="severity-level" id="severityLevel">Low</span>
+                            <span class="severity-score" id="severityScore">(0.0/3.0)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detected Issues -->
+                <div class="card issues-card">
+                    <div class="card-header">
+                        <i class="fas fa-bug"></i>
+                        <h3>Detected Issues</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="issue-category">
+                            <h4>Diseases</h4>
+                            <div class="issue-list" id="diseasesList">
+                                <span class="no-issues">No diseases detected</span>
+                            </div>
+                        </div>
+                        <div class="issue-category">
+                            <h4>Pests</h4>
+                            <div class="issue-list" id="pestsList">
+                                <span class="no-issues">No pests detected</span>
+                            </div>
+                        </div>
+                        <div class="issue-category">
+                            <h4>Abiotic Stresses</h4>
+                            <div class="issue-list" id="abioticList">
+                                <span class="no-issues">No abiotic stresses detected</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confidence Scores -->
+                <div class="card confidence-card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>Confidence Scores & Data Analysis</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="confidence-item">
+                            <span class="confidence-label">Health Status:</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" id="healthConfidence"></div>
+                            </div>
+                            <span class="confidence-value" id="healthConfidenceValue">0%</span>
+                        </div>
+                        <div class="chart-container" style="position: relative; height:300px; width:100%; margin-top: 20px;">
+                            <canvas id="confidenceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advisory Section -->
+                <div class="card advisory-card">
+                    <div class="card-header">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>Treatment Recommendations</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="advisory-summary" id="advisorySummary">
+                            <!-- Summary will be inserted here -->
+                        </div>
+                        
+                        <div class="priority-badge" id="priorityBadge">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span id="priorityText">Moderate Priority</span>
+                        </div>
+                        
+                        <div class="treatment-section">
+                            <h4>Chemical Treatments</h4>
+                            <ul class="treatment-list" id="chemicalTreatments">
+                                <li>No chemical treatments recommended</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="treatment-section">
+                            <h4>Biological Treatments</h4>
+                            <ul class="treatment-list" id="biologicalTreatments">
+                                <li>No biological treatments recommended</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="treatment-section">
+                            <h4>Cultural Practices</h4>
+                            <ul class="treatment-list" id="culturalTreatments">
+                                <li>No cultural practices recommended</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="expert-alert" id="expertAlert" style="display: none;">
+                            <i class="fas fa-user-md"></i>
+                            <span>Expert consultation recommended for this case.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prevention Section -->
+                <div class="card prevention-card">
+                    <div class="card-header">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Preventive Measures</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="prevention-list" id="preventionList">
+                            <!-- Prevention items will be inserted here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- New Analysis Button -->
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="newAnalysisBtn">
+                        <i class="fas fa-redo"></i> New Analysis
+                    </button>
+                    <button class="btn btn-download" id="downloadReportBtn">
+                        <i class="fas fa-download"></i> Download Report
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 AgriGuard AI. Full-Plant Health Assessment System.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/js/app.js?v=2"></script>
+</body>
+</html>
